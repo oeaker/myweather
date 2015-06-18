@@ -11,9 +11,9 @@ public class County {
 	
 	private int id;
 	
-	private String countryName;
+	private String countyName;
 	
-	private String countryCode;
+	private String countyCode;
 	
 	private int cityId;
 
@@ -25,20 +25,20 @@ public class County {
 		this.id = id;
 	}
 
-	public String getCountryName() {
-		return countryName;
+	public String getCountyName() {
+		return countyName;
 	}
 
-	public void setCountryName(String countryName) {
-		this.countryName = countryName;
+	public void setCountyName(String countyName) {
+		this.countyName = countyName;
 	}
 
-	public String getCountryCode() {
-		return countryCode;
+	public String getCountyCode() {
+		return countyCode;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setCountyCode(String countyCode) {
+		this.countyCode = countyCode;
 	}
 
 	public int getCityId() {
@@ -48,5 +48,4 @@ public class County {
 	public void setCityId(int cityId) {
 		this.cityId = cityId;
 	}
-
 }
