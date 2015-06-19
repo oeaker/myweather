@@ -124,7 +124,7 @@ public class ChooseAreaActivity extends Activity {
 	 * 查询所有的城市信息
 	 */
 	private void queryCity() {
-		cityList = coolWeatherDB.loadCities(chooseProvince.getId());
+		cityList = coolWeatherDB.loadCities(Integer.valueOf(chooseProvince.getProvinceCode()));
 		if (null != cityList && cityList.size() > 0) {
 			dataList.clear();
 			for (City item : cityList) {
@@ -146,7 +146,7 @@ public class ChooseAreaActivity extends Activity {
 	 * 获取所有的乡村信息
 	 */
 	private void queryCountry() {
-		countryList = coolWeatherDB.loadCounties(chooseCity.getId());
+		countryList = coolWeatherDB.loadCounties(Integer.valueOf(chooseCity.getCityCode()));
 		if (null != countryList && countryList.size() > 0) {
 			dataList.clear();
 			for (County item : countryList) {
