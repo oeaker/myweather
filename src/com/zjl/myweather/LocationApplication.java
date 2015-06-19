@@ -4,9 +4,14 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
+import com.zjl.myweather.activity.WeatherActivity;
+import com.zjl.myweather.util.LogUtil;
+import com.zjl.myweather.util.MStrings;
 
 import android.app.Application;
 import android.app.Service;
+import android.content.Intent;
+import android.graphics.Region;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
@@ -45,6 +50,7 @@ public class LocationApplication extends Application {
 
 		@Override
 		public void onReceiveLocation(BDLocation location) {
+
 			// Receive Location
 			StringBuffer sb = new StringBuffer(256);
 			sb.append("time : ");
@@ -73,9 +79,11 @@ public class LocationApplication extends Application {
 				sb.append("\noperationers : ");
 				sb.append(location.getOperators());
 			}
-			
+
+			sb.append("\ncitycode : " + location.getCityCode() + "|"
+					+ location.getProvince() + "|" + location.getStreetNumber());
 			logMsg(sb.toString());
-			Log.i("BaiduLocationApiDem", sb.toString());
+			// LogUtil.d(MStrings.TAG, sb.toString());
 		}
 	}
 

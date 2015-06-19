@@ -3,10 +3,12 @@ package com.zjl.myweather;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
+import com.zjl.myweather.activity.WeatherActivity;
 import com.zjl.myweather.util.LogUtil;
 import com.zjl.myweather.util.MStrings;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +29,7 @@ public class LocationActivity extends Activity {
 	private LocationClient mLocationClient;
 	private TextView LocationResult;
 	private Button startLocation;
+	private Button toweather;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class LocationActivity extends Activity {
 
 		LocationResult = (TextView) findViewById(R.id.dispaly_location_text);
 		startLocation = (Button) findViewById(R.id.start);
+		((LocationApplication) getApplication()).mLocationResult = LocationResult;
 
 		try {
 			mLocationClient = ((LocationApplication) getApplication()).mLocationClient;
@@ -52,6 +56,19 @@ public class LocationActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				mLocationClient.start();
+			}
+		});
+
+		toweather = (Button) findViewById(R.id.weather);
+		toweather.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(LocationActivity.this,
+						WeatherActivity.class);
+				intent.putExtra("county_code", "270101");
+				startActivity(intent);
 			}
 		});
 	}

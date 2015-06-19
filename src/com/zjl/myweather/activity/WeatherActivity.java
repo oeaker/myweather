@@ -85,6 +85,7 @@ public class WeatherActivity extends Activity implements OnClickListener {
 			weatherInfoLayout.setVisibility(View.INVISIBLE);
 			cityNameText.setVisibility(View.VISIBLE);
 			queryWeatherCode(countyCode);
+			LogUtil.d(MStrings.TAG, countyCode);
 		} else {
 			// 没有县级代号时就直接显示本地天气
 			showWeather();

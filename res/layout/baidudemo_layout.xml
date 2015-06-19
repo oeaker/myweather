@@ -11,6 +11,13 @@
         android:layout_gravity="center"
         android:text="开始定位" />
 
+    <Button
+        android:id="@+id/weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="查看成都天气" />
+
     <TextView
         android:id="@+id/dispaly_location_text"
         android:layout_width="match_parent"

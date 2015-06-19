@@ -45,7 +45,7 @@ public class AutoUpdateService extends Service {
 		}).start();
 
 		AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		int anhour = 10 * 1000; // 为了看效果，设置10S更新一次
+		int anhour = 60 * 60 * 1000; // 为了看效果，设置10S更新一次
 		long targetTime = SystemClock.elapsedRealtime() + anhour;
 		Intent i = new Intent(this, AutoUpdateService.class);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
