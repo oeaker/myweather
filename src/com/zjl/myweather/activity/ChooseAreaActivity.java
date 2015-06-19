@@ -67,7 +67,12 @@ public class ChooseAreaActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 
+		// 初始化数据库信息
+		coolWeatherDB = new CoolWeatherDB(ChooseAreaActivity.this);
+
+		titleTextView = (TextView) findViewById(R.id.title_text);
 		listView = (ListView) findViewById(R.id.list_view);
+
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
@@ -79,15 +84,16 @@ public class ChooseAreaActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				if (currentLevel == CITY_LEVEL) {
+					chooseProvince = provinceList.get(position);
 					queryCity();
-					chooseCity = cityList.get(position);
+
 				} else if (currentLevel == COUNTRY_LEVEL) {
+					chooseCity = cityList.get(position);
 					queryCountry();
-					chooseCounty = countryList.get(position);
 				}
 			}
 		});
-		
+
 		queryProvince();
 	}
 
@@ -109,6 +115,9 @@ public class ChooseAreaActivity extends Activity {
 			queryFromServer(null, "province");
 			LogUtil.d(MStrings.TAG, "从网络获取省份信息");
 		}
+
+		// 把当前的行政区等级设置为城市
+		currentLevel = CITY_LEVEL;
 	}
 
 	/**
@@ -126,9 +135,10 @@ public class ChooseAreaActivity extends Activity {
 			titleTextView.setText(chooseProvince.getProvinceName());
 			currentLevel = CITY_LEVEL;
 		} else {
-			queryFromServer(String.valueOf(chooseProvince.getId()), "city");
+			queryFromServer(String.valueOf(chooseProvince.getProvinceCode()),
+					"city");
 			LogUtil.d(MStrings.TAG, "从网络获取城市信息");
-			
+
 		}
 	}
 
@@ -146,9 +156,8 @@ public class ChooseAreaActivity extends Activity {
 			adapter.notifyDataSetChanged();
 			titleTextView.setText(chooseCity.getCityName());
 			currentLevel = COUNTRY_LEVEL;
-		}
-		else {
-			queryFromServer(String.valueOf(chooseCity.getId()), "county");
+		} else {
+			queryFromServer(String.valueOf(chooseCity.getCityCode()), "county");
 			LogUtil.d(MStrings.TAG, "从网络获取城镇信息");
 		}
 	}
@@ -231,6 +240,18 @@ public class ChooseAreaActivity extends Activity {
 	private void closeProgressDialog() {
 		if (null != progressDialog) {
 			progressDialog.dismiss();
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		if (currentLevel == CITY_LEVEL) {
+			queryProvince();
+		} else if (currentLevel == COUNTRY_LEVEL) {
+			queryCity();
+		} else {
+			finish();
 		}
 	}
 }

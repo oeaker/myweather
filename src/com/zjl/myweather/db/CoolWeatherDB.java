@@ -42,7 +42,7 @@ public class CoolWeatherDB {
 	 * 
 	 * @param context
 	 */
-	CoolWeatherDB(Context context) {
+	public CoolWeatherDB(Context context) {
 		/*
 		 * 初始化数据库
 		 */
