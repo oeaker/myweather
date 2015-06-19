@@ -6,7 +6,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -38,7 +41,7 @@ public class ChooseAreaActivity extends Activity {
 
 	private final static int CITY_LEVEL = 1;
 
-	private final static int COUNTRY_LEVEL = 2;
+	private final static int COUNTY_LEVEL = 2;
 
 	private ProgressDialog progressDialog;
 	private TextView titleTextView;
@@ -56,14 +59,32 @@ public class ChooseAreaActivity extends Activity {
 	// 當前選中的省市區
 	private Province chooseProvince;
 	private City chooseCity;
-	private County chooseCounty;
 
 	private int currentLevel;
+
+	/**
+	 * 是否从WeatherActivity中跳转过来。
+	 */
+	private boolean isFromWeatherActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+
+		isFromWeatherActivity = getIntent().getBooleanExtra(
+				"from_weather_activity", false);
+
+		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
+			Intent intent = new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 
@@ -83,14 +104,23 @@ public class ChooseAreaActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				if (currentLevel == CITY_LEVEL) {
+				if (currentLevel == PROVINCE_LEVEL) {
 					chooseProvince = provinceList.get(position);
 					queryCity();
 
-				} else if (currentLevel == COUNTRY_LEVEL) {
+				} else if (currentLevel == CITY_LEVEL) {
 					chooseCity = cityList.get(position);
 					queryCountry();
+				} else if (currentLevel == COUNTY_LEVEL) {
+					String countyCode = countryList.get(position)
+							.getCountyCode();
+					Intent intent = new Intent(ChooseAreaActivity.this,
+							WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
+
 			}
 		});
 
@@ -113,18 +143,16 @@ public class ChooseAreaActivity extends Activity {
 			currentLevel = PROVINCE_LEVEL;
 		} else {
 			queryFromServer(null, "province");
-			LogUtil.d(MStrings.TAG, "从网络获取省份信息");
+			// LogUtil.d(MStrings.TAG, "从网络获取省份信息");
 		}
-
-		// 把当前的行政区等级设置为城市
-		currentLevel = CITY_LEVEL;
 	}
 
 	/**
 	 * 查询所有的城市信息
 	 */
 	private void queryCity() {
-		cityList = coolWeatherDB.loadCities(Integer.valueOf(chooseProvince.getProvinceCode()));
+		cityList = coolWeatherDB.loadCities(Integer.valueOf(chooseProvince
+				.getId()));
 		if (null != cityList && cityList.size() > 0) {
 			dataList.clear();
 			for (City item : cityList) {
@@ -137,8 +165,7 @@ public class ChooseAreaActivity extends Activity {
 		} else {
 			queryFromServer(String.valueOf(chooseProvince.getProvinceCode()),
 					"city");
-			LogUtil.d(MStrings.TAG, "从网络获取城市信息");
-
+			// LogUtil.d(MStrings.TAG, "从网络获取城市信息");
 		}
 	}
 
@@ -146,7 +173,8 @@ public class ChooseAreaActivity extends Activity {
 	 * 获取所有的乡村信息
 	 */
 	private void queryCountry() {
-		countryList = coolWeatherDB.loadCounties(Integer.valueOf(chooseCity.getCityCode()));
+		countryList = coolWeatherDB.loadCounties(Integer.valueOf(chooseCity
+				.getId()));
 		if (null != countryList && countryList.size() > 0) {
 			dataList.clear();
 			for (County item : countryList) {
@@ -155,10 +183,10 @@ public class ChooseAreaActivity extends Activity {
 
 			adapter.notifyDataSetChanged();
 			titleTextView.setText(chooseCity.getCityName());
-			currentLevel = COUNTRY_LEVEL;
+			currentLevel = COUNTY_LEVEL;
 		} else {
 			queryFromServer(String.valueOf(chooseCity.getCityCode()), "county");
-			LogUtil.d(MStrings.TAG, "从网络获取城镇信息");
+			// LogUtil.d(MStrings.TAG, "从网络获取城镇信息");
 		}
 	}
 
@@ -208,6 +236,8 @@ public class ChooseAreaActivity extends Activity {
 
 			@Override
 			public void onError(Exception e) {
+				// 打印错误信息
+				LogUtil.e(MStrings.TAG, e.toString());
 				// 通过runOnUiThread()方法回到主线程处理逻辑
 				runOnUiThread(new Runnable() {
 					@Override
@@ -248,9 +278,14 @@ public class ChooseAreaActivity extends Activity {
 		// TODO Auto-generated method stub
 		if (currentLevel == CITY_LEVEL) {
 			queryProvince();
-		} else if (currentLevel == COUNTRY_LEVEL) {
+		} else if (currentLevel == COUNTY_LEVEL) {
 			queryCity();
 		} else {
+			if (isFromWeatherActivity) {
+				Intent intent = new Intent(this, WeatherActivity.class);
+				startActivity(intent);
+			}
+
 			finish();
 		}
 	}
