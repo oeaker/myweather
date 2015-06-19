@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.wifi.WifiConfiguration.Status;
 
 /**
  * @author oeaker@163.com:
@@ -49,7 +48,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
 		db.execSQL(CREATE_PROVINCE);
 		db.execSQL(CREATE_COUNTRY);
-		db.execSQL(CREATE_PROVINCE);
+		db.execSQL(CREATE_CITY);
 
 	}
 
